@@ -1,7 +1,8 @@
 #  `React-Redux`
 
     -   React-Redux is the offical Redux UI libray for React
-        ![](images/Image3.JPG)
+
+![](images/Image3.JPG)
 
 
 ### `Perrequisites`
