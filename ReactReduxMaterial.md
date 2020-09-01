@@ -4,6 +4,10 @@
 
 ![](./images/Image3.PNG)
 
+*   __`React is library used t build user interfaces`__
+*   __`Redux is a library for managing state in a predictable way in JavaScript applications.`__
+*   __`React -Redux is a library that provides bindings to use React and Redux together in an application.`__
+
 
 ### `Perrequisites`
 
