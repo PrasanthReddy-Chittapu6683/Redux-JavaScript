@@ -2,7 +2,7 @@
 
     -   React-Redux is the offical Redux UI libray for React
 
-![](images/Image3.JPG)
+![](./images/Image3.PNG)
 
 
 ### `Perrequisites`
@@ -55,7 +55,7 @@
     *   In React apppliction, if we have large no of components and want to share the state or data to other components, state management could become trouble. This where __`REDUX`__ helps out.
     *   Using Redux, your state is contains outside the Components. If Component A want to update the update the state, it communicates with Redux state container.
     *   Using this seperate Redux State container only the respective components get data from Redux State.
-        ![](images/Image2.JPG)
+        ![](./images/Image2.PNG)
 
 
 ### `Setup the project`
@@ -93,5 +93,5 @@
         ```
 *   Lets create javscript file to write our code. __`index.js`__
     *   Just print `console.log("From index.js")` and run command __`node index`__ . This will print the log statement in terminal.
-        ![](images/Image1.JPG)
+        ![](./images/Image1.PNG)
 
