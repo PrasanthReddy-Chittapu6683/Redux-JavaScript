@@ -221,3 +221,309 @@
              ```
     *   __`Refer:`__
         *   index.js
+
+### `Multiple Reducers`:
+
+*   Let see how to create Multiple Reducers in our javascript application. In pervious example we see the BUY_CAKE scenario using reducer function. Now let see to add one more reducer fucntion to BUY_ICECREAMS.
+    *   Ex:
+    *   __`Approach : 1`__
+        ```Javascript 
+            //Step:1 - Add new Const variable
+            const BUY_CAKE = 'BUY_CAKE'
+            const BUY_ICECREAM = 'BUY_ICECREAM'
+            //Step:2 - Add new Action object that represent ICECREMAS
+            const actionObj_IceCreams = {
+                type: BUY_ICECREAM,
+                info: 'Second Redux function with Multiple reducer'
+            }
+            //Step:3 - Add new Action function that represent ICECREMAS
+            function buyCake() {
+                return actionObj_Cakes;
+            }
+            function buyIceCreams() {
+                return actionObj_IceCreams;
+            }
+            //Step:4 - Add numOfIceCreams to initalState object
+            const initialState = {
+                numOfCakes: 10,
+                numOfIceCreams: 20
+            }
+            //Step:5 - In Reducer function handle the scenario if action.type === 'BUY_ICECREAMS'
+            const reducer = (state = initialState, action) => {
+                switch (action.type) {
+                    case BUY_CAKE:
+                        return {
+                            ...state,// This spread operator we are using to copy the existing object(other properties in the object will remain same)
+                            numOfCakes: state.numOfCakes - 1
+                        }
+                    case BUY_ICECREAM:
+                        return {
+                            ...state,// This spread operator we are using to copy the existing object(other properties in the object will remain same)
+                            numOfIceCreams: state.numOfIceCreams - 1
+                        }
+                    default:
+                        return state;
+                }
+            }
+            //Step:6 - Finally call dispatch function for  buyIceCreams()
+            store.dispatch(buyCake())
+            store.dispatch(buyCake())// To cause state transistion we are just calling same dispatch function 
+            store.dispatch(buyCake())
+            store.dispatch(buyIceCreams())
+            store.dispatch(buyIceCreams())
+        ```
+        *   Output: Enter command `node Multiple_Reducers_Approach1`
+        ``` javascript
+            Initial State  { numOfCakes: 10, numOfIceCreams: 20 } // prints initial State object 
+            Updated State { numOfCakes: 9, numOfIceCreams: 20 } // prints using dispath(buyCake()), cake count got decremented and icecreams count remain same
+            Updated State { numOfCakes: 8, numOfIceCreams: 20 }// prints using dispath(buyCake()), cake count got decremented and icecreams count remain same
+            Updated State { numOfCakes: 7, numOfIceCreams: 20 }// prints using dispath(buyCake()), cake count got decremented and icecreams count remain same
+            Updated State { numOfCakes: 7, numOfIceCreams: 19 }// prints using dispath(buyCake()), cake count is remain same and icecreams count got decremented
+            Updated State { numOfCakes: 7, numOfIceCreams: 18 }// prints using dispath(buyIceCreams()), cake count is same and icecreams count got decremented
+        ```
+        *   __`Refer``__:  
+            *  __`Multiple_Reducers_Approach1`__ 
+        * `Note: In the above approach we are handling only 2 scenarions buyCake() & buyIceCreams(), what if we have more scenarios to handle. Let see another approach`
+    *   __`Approach : 2`__
+         ```Javascript 
+            //Step:1 - Creating default/initial state objects for both Cake and Icecream saperately
+            const initialCakeState = {
+                numOfCakes: 10,
+            }
+            const initialIceCreamState = {
+                numOfIceCreams: 20,
+            }
+            //Step:2 - Creating two reducer functions for both Cake and Icecream saperately
+            /**Creting the cakeReducer() function */
+            const cakeReducer = (state = initialCakeState, action) => {
+                switch (action.type) {
+                    case BUY_CAKE:
+                        return {
+                            ...state,// This spread operator we are using to copy the existing object(other properties in the object will remain same)
+                            numOfCakes: state.numOfCakes - 1
+                        }
+                    default:
+                        return state;
+                }
+            }
+
+
+            /**Creting the iceCreamReducer() function */
+            const iceCreamReducer = (state = initialIceCreamState, action) => {
+                switch (action.type) {
+                    case BUY_ICECREAM:
+                        return {
+                            ...state,// This spread operator we are using to copy the existing object(other properties in the object will remain same)
+                            numOfIceCreams: state.numOfIceCreams - 1
+                        }
+                    default:
+                        return state;
+                }
+            }
+         ```
+    *   Now, we need to  add this cakeReducer() & iceCreamReducer() functions to Redux store function `createStore`. To add multiple reducers to `createStore` function Redux provide another option is `combineReducers`
+    *   `combineReducers` method accpets obj as a parameter, that should have the details of key,value pairs which represents reducer functions
+        ``` javascript
+            // Step:3 - Add multiple reducers to `createStore` function, Redux provide another option is `combineReducers`
+            const combineReducer = redux.combineReducers; // redux librry provides method combineReducers to handle multiple reducers
+            // Step:4 - Create rootReducer that can add the reducer functiions
+            const rootReducer = combineReducers({
+                cake: cakeReducer,
+                icecreame: iceCreamReducer
+            })
+            // Step:5 - Now Add this rootReducer to createStore
+            const store = createStore(rootReducer) 
+
+        ```
+     *   Output: Enter command `node Multiple_Reducers_Approach2`
+        ``` javascript
+            Initial State  { cake: { numOfCakes: 10 }, icecreame: { numOfIceCreams: 20 } }
+            Updated State { cake: { numOfCakes: 9 }, icecreame: { numOfIceCreams: 20 } }
+            Updated State { cake: { numOfCakes: 8 }, icecreame: { numOfIceCreams: 20 } }
+            Updated State { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 20 } }
+            Updated State { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 19 } }
+            Updated State { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 18 } }
+        ```
+    *   Here the only diffrence from Approach1 and Approach2 is Globals state for cake and iccrema. If you want to access the cake from state object, we need to specify state.cake.numOfCakes same for icecreams: state.icecream.numOfIceCreams
+    *   __`Refer``__:  
+            *  __`Multiple_Reducers_Approach1`__ 
+
+
+### `Middleware`
+
+*   It is suggested way to extend Redux with custom functionality (means, want to show any extra features)
+*   It provides a third-party extension point between dispatching an action, and the moment it reaches the reducer.
+*   We use Middleware for logging, crash reporting, performing asynchronous tasks etc.,.
+
+*   Let see now how to use this middleware in our Redux.
+*   First, install Redux Logger, which helps us to get all the log infrmation about Redux.
+*   Open Terminal and type command
+    *   `npm i redux-logger`
+*   After installation completes, Now create a logger for our application.
+    ``` Javascript
+    // Step: 1 - Import reduxLogger
+    const reduxLogger = require('redux-logger')
+
+    // Step: 2 - use applyMiddleware & createLogger function
+    const applyMyMiddleware = redux.applyMiddleware
+    const myLogger = reduxLogger.createLogger()
+    // Step: 3 - Now pass it as an 2nd argument to createStore() fucntion, pass myLogger to applyMyMiddleware()
+    const store = createStore(rootReducer, applyMyMiddleware(myLogger))
+    // Step: 3 - Now subscribe the function and see the output how it works
+    const unsubscribe = store.subscribe(() => {})
+    ```
+*   Output: Enter command `node MiddleWare` (ignore all the style properties). In the below output we can see that based on action type, state object handles prev state and current/next state while calling dispatch function
+    ``` javascript
+        Initial State  { cake: { numOfCakes: 10 }, icecreame: { numOfIceCreams: 20 } }
+        %c action %cBUY_CAKE %c@ 06:06:24.654 color: gray; font-weight: lighter; color: inherit; color: gray; font-weight: lighter;
+        %c prev state color: #9E9E9E; font-weight: bold { cake: { numOfCakes: 10 }, icecreame: { numOfIceCreams: 20 } }
+        %c action     color: #03A9F4; font-weight: bold { type: 'BUY_CAKE',
+            info: 'First Redux function with Multiple reducer' }
+        %c next state color: #4CAF50; font-weight: bold { cake: { numOfCakes: 9 }, icecreame: { numOfIceCreams: 20 } }
+        %c action %cBUY_CAKE %c@ 06:06:24.661 color: gray; font-weight: lighter; color: inherit; color: gray; font-weight: lighter;
+        %c prev state color: #9E9E9E; font-weight: bold { cake: { numOfCakes: 9 }, icecreame: { numOfIceCreams: 20 } }
+        %c action     color: #03A9F4; font-weight: bold { type: 'BUY_CAKE',
+            info: 'First Redux function with Multiple reducer' }
+        %c next state color: #4CAF50; font-weight: bold { cake: { numOfCakes: 8 }, icecreame: { numOfIceCreams: 20 } }
+        %c action %cBUY_CAKE %c@ 06:06:24.676 color: gray; font-weight: lighter; color: inherit; color: gray; font-weight: lighter;
+        %c prev state color: #9E9E9E; font-weight: bold { cake: { numOfCakes: 8 }, icecreame: { numOfIceCreams: 20 } }
+        %c action     color: #03A9F4; font-weight: bold { type: 'BUY_CAKE',
+            info: 'First Redux function with Multiple reducer' }
+        %c next state color: #4CAF50; font-weight: bold { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 20 } }
+        %c action %cBUY_ICECREAM %c@ 06:06:24.680 color: gray; font-weight: lighter; color: inherit; color: gray; font-weight: lighter;
+        %c prev state color: #9E9E9E; font-weight: bold { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 20 } }
+        %c action     color: #03A9F4; font-weight: bold { type: 'BUY_ICECREAM',
+            info: 'Second Redux function with Multiple reducer' }
+        %c next state color: #4CAF50; font-weight: bold { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 19 } }
+        %c action %cBUY_ICECREAM %c@ 06:06:24.751 color: gray; font-weight: lighter; color: inherit; color: gray; font-weight: lighter;
+        %c prev state color: #9E9E9E; font-weight: bold { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 19 } }
+        %c action     color: #03A9F4; font-weight: bold { type: 'BUY_ICECREAM',
+            info: 'Second Redux function with Multiple reducer' }
+        %c next state color: #4CAF50; font-weight: bold { cake: { numOfCakes: 7 }, icecreame: { numOfIceCreams: 18 } }
+    ```
+
+### `Async Actions`
+
+*   Till now, we have seen `Synchronous Actions`:
+    *   As sson as an action was dispatched, the state was immediately upaded.
+    *   If you dispatch the BUY_CAKE / BUY_ICECREAM action, the numOfCakes / numOfIceCreams was right away decremented by 1 
+*   In `Async Actions`:
+    *   Will do Asyncronous API calls to fetch data from an end point and use that data in your application.
+
+*   Let see after feching the data from API how we are going to handle it in below functions:
+    *   State
+    *   Actions
+    *   Reducer
+
+        ``` Javascript
+        // Step: 1  Import packages
+        const redux = require('redux')
+        const createStore = redux.createStore // redux library provides method createStore
+
+        // Step: 2  Create initial STATE Object
+        const initialState = {
+            loading: false,
+            users: [],
+            error: ''
+        }
+        // Step: 3 Create ACTION functions
+        const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST'
+        const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS'
+        const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE'
+        /**This is action function */
+        const fetchUserRequest = () => {
+            return {
+                type: FETCH_USER_REQUEST
+            }
+        }
+        /**This is action function */
+        const fetchUserSuccess = (users) => {
+            return {
+                type: FETCH_USER_SUCCESS,
+                payload: users
+            }
+        }
+        /**This is action function */
+        const fetchUserFailure = (error) => {
+            return {
+                type: FETCH_USER_FAILURE,
+                error_payload: error
+            }
+        }
+
+        // Step: 4  Create ACTION functions
+
+        /**Creting the reducer() function */
+        const myReducer = (state = initialState, action) => {
+            switch (action.type) {
+                case FETCH_USER_REQUEST:
+                    return {
+                        ...state,// This spread operator we are using to copy the existing object(other properties in the object will remain same)
+                        loading: true
+                    }
+                case FETCH_USER_SUCCESS:
+                    return {
+                        laoding: false,
+                        users: action.payload,
+                        error: ''
+                    }
+
+                case FETCH_USER_FAILURE:
+                    return {
+                        loading: false,
+                        users: [],
+                        error: action.error_payload
+                    }
+            }
+        }
+        // Step: 4  call REDUCER funtion using createStore which help us to hold the changes  in Redux store.
+        const store = createStore(myReducer)
+        ```
+    *   Now we need to do Asyn call to fetch the data. Let see how we will do in Redux.
+    *   There are two package that we need to install: 
+        *   __`axios`__ : This will use to make `GET` / `POST` / `PUT` / `DELETE` request to API endpoints.
+        *   __`redux-thunk`__ : This is a package from Redux eco-system and is standard way to `define async creators`.
+            *   It will be a Middleware to applyning in Redux store.
+        ```Javascript
+            // Step: 5  Goto Terminal and install both packages, run the command:
+            `npm install axios redux-thunk`
+
+            // Step: 6 Apply redux-thunk to our Middleware Redux store & import redux-thunk pass it as a parameter to applyMyMiddleware
+            const applyMyMiddleware = redux.applyMiddleware
+            const thunkMiddleware = require('redux-thunk').default
+            const store = createStore(myReducer, applyMyMiddleware(thunkMiddleware))
+
+            // Step: 7  Now create ACTION CREATOR which can helps us to make async call an fetch the data. To Fetch the data we are using (https://jsonplaceholder.typicode.com/posts)
+
+            /**This is an Action creator : This returns an Action, 
+              But the 'redux-thunk' middleware bring is the ability of an Action creator to return an function instead of object.  */
+            const featUser = () => {
+
+                console.log('Initial State 1', fetchUserRequest())
+                /**In this functions we can  do async calls and dispatch actions 
+                Using this dispatch function we are enabling loading icon*/
+                return function (dispatch) {
+                    console.log('Initial State 2', fetchUserRequest())
+
+                    dispatch(fetchUserRequest())
+                    axios.get('https://jsonplaceholder.typicode.com/posts')
+                        .then(response => {
+                            const users = response.data.map(val => val.id) // We are just going to display ID
+                            dispatch(fetchUserSuccess(users))
+                        }).
+                        catch(error => {
+                            dispatch(fetchUserFailure(error.message))
+                        })
+
+                }
+            }
+            // Subscribe to the store and print the what store is holding the data
+            store.subscribe(() => {
+                console.log(store.getState())
+            })
+            // Here we are dispatching the store to fetch data and store in Redux Store
+            store.dispatch(featUser)
+            
+            // Step: 8 Print the out put. Open terminal and run command `node .\asyncAction.js`
+
+        ```

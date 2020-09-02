@@ -5,21 +5,32 @@ const createStore = redux.createStore // redux library provides method createSto
 
 
 const BUY_CAKE = 'BUY_CAKE'
+const BUY_ICECREAM = 'BUY_ICECREAM'
 
 // /** Define an action object that has type  */
-const actionObj = {
+const actionObj_Cakes = {
     type: BUY_CAKE,
-    info: 'First Redux function with single reducer'
+    info: 'First Redux function with Multiple reducer'
 }
+
+const actionObj_IceCreams = {
+    type: BUY_ICECREAM,
+    info: 'Second Redux function with Multiple reducer'
+}
+
 
 /**This is action function */
 function buyCake() {
-    return actionObj;
+    return actionObj_Cakes;
+}
+function buyIceCreams() {
+    return actionObj_IceCreams;
 }
 
 /** We creating default/initial state object which we can pass this as a state paramenter to reducer() function */
 const initialState = {
-    numOfCakes: 10
+    numOfCakes: 10,
+    numOfIceCreams: 20
 }
 
 /**Creting the reducer() function */
@@ -29,6 +40,11 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,// This spread operator we are using to copy the existing object(other properties in the object will remain same)
                 numOfCakes: state.numOfCakes - 1
+            }
+        case BUY_ICECREAM:
+            return {
+                ...state,// This spread operator we are using to copy the existing object(other properties in the object will remain same)
+                numOfIceCreams: state.numOfIceCreams - 1
             }
         default:
             return state;
@@ -44,6 +60,8 @@ const unsubscribe = store.subscribe(() => console.log('Updated State', store.get
 store.dispatch(buyCake())
 store.dispatch(buyCake())// To cause state transistion we are just calling same dispatch function 
 store.dispatch(buyCake())
+store.dispatch(buyIceCreams())
+store.dispatch(buyIceCreams())
 
 //We can even `unregisterting/unsubscribing of listeners` via the function returned by `subscribe(listener)`
 unsubscribe();
